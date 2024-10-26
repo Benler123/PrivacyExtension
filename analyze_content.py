@@ -4,7 +4,6 @@ import anthropic
 def call_anthropic(system_prompt, messages):
     client = anthropic.Anthropic(
         # defaults to os.environ.get("ANTHROPIC_API_KEY")
-        api_key="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",
     )
     response = client.messages.create(
         model="claude-3-5-sonnet-20241022",
