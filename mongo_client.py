@@ -4,22 +4,27 @@ import os
 
 MONGO_URI = "mongodb+srv://sunidhi:TRzCMl4WHp6CcTdT@privacy.kieyt.mongodb.net/?retryWrites=true&w=majority&appName=Privacy"
 
-class MongoReader: 
+class MongoConnector: 
     def __init__(self):
         self.client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
         self.db = self.client["PrivacyExtensionDB"]
         self.collection = self.db["UrlToAnalysis"]
 
     def fetch_data(self, url):
-        return self.collection.find_one({"url": url})
+        mongo_object = self.collection.find_one({"url": url})
+        if mongo_object:
+            mongo_object.pop("_id")
+        return mongo_object
+        # return self.collection.find_one({"url": url})
     
     def fetch_all(self):
-        return list(self.collection.find({}))
+        cursor = self.collection.find({})
+        result = {doc["url"]: doc["analysis"] for doc in cursor}
+        return result
     
     def insert_data(self, url, analysis):
         self.collection.insert_one({"url": url, "analysis": analysis})
        
 if __name__ == "__main__":
-    reader = MongoReader()
-    data = reader.fetch_all()
-    specific_data = reader.fetch_data("someurl.com")
+    mongo_connector = MongoConnector()
+    mongo_connector.insert_data("weinies.com", "This is a test")
