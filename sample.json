@@ -1,0 +1,77 @@
+{
+    "scores": {
+        "account_control": {
+            "quotes": [
+                "we may terminate or suspend your access to any disney products andor terminate this agreement subject to the survival of terms as provided below if required by law or if we have objective reason to believe you have used the disney products in violation of any provision",
+                "you are responsible for taking reasonable steps to maintain the confidentiality of your username and password and you are responsible for all activities under your account"
+            ],
+            "score": 3
+        },
+        "data_collection": {
+            "quotes": [
+                "you agree that any information you provide and maintain is accurate current and complete including your contact information for notices and other communications from us and your payment information",
+                "you agree that we may take steps to verify the accuracy of information you provide including contact information"
+            ],
+            "score": 3
+        },
+        "data_deletion": {
+            "quotes": [
+                "we reserve the right to make such changes or if necessary discontinue disney products if required by law"
+            ],
+            "score": 2
+        },
+        "data_sharing": {
+            "quotes": [
+                "you grant us nonexclusive sublicensable irrevocable and royaltyfree worldwide license under all copyrights trademarks patents trade secrets privacy and publicity rights and other intellectual property rights",
+                "we reserve the right to utilize third party payment card updating services to obtain current expiration dates on credit cards and debit cards"
+            ],
+            "score": 2
+        },
+        "legal_rights": {
+            "quotes": [
+                "any disputes between you and us except disputes resolved in small claims court or relating to the ownership or enforcement of intellectual property rights are subject to class action waiver and must be resolved by individual binding arbitration",
+                "you and disney agree to waive class action procedures neither you nor disney will seek to have dispute heard as class action"
+            ],
+            "score": 2
+        },
+        "privacy_controls": {
+            "quotes": [
+                "you can opt out of promotional communications by following the unsubscribe directions for emails",
+                "when you use the disney products you may grant certain permissions to us for your device andor accounts most mobile device platforms provide additional information regarding these permissions"
+            ],
+            "score": 3
+        },
+        "security_measures": {
+            "quotes": [
+                "you agree not to knowingly or recklessly introduce virus or other harmful component or otherwise tamper with impair or damage any disney product",
+                "you agree not to share your account or account information with others"
+            ],
+            "score": 3
+        },
+        "terms_changes": {
+            "quotes": [
+                "if we make material change to this agreement it will be effective thirty days following either our dispatch of notice to you or our posting of the amended terms",
+                "you are responsible for periodically reviewing this agreement for updates and amendments"
+            ],
+            "score": 3
+        },
+        "transparency": {
+            "quotes": [
+                "charges will be disclosed to you before you complete the license purchase",
+                "we may revise the pricing for the disney products we offer"
+            ],
+            "score": 3
+        },
+        "user_content_rights": {
+            "quotes": [
+                "in most instances we do not claim ownership of your user generated content however you grant us nonexclusive sublicensable irrevocable and royaltyfree worldwide license",
+                "we may monitor screen post remove modify store and review user generated content or communications sent through disney product at any time and for any reason"
+            ],
+            "score": 2
+        }
+    },
+    "metadata": {
+        "risk_percentage": 48,
+        "risk_level": "High Risk"
+    }
+}
