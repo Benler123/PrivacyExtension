@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import fastapi
 import urllib.parse
+import uvicorn
 
 from analyze_content import *
 from parse_content import HTMLTextExtractor
@@ -45,3 +46,6 @@ def fetch_all():
 @app.get('/favicon.ico')
 async def favicon():
     return FileResponse('static/favicon.ico')
+
+if __name__ == "__main__":
+    uvicorn.run(app)
