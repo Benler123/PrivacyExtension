@@ -32,6 +32,7 @@ def prepare_prompt(tc):
 
 def parse_response(response):
     response = response[0].text
+    print(response)
     analysis = json.loads(response)
 
     return analysis

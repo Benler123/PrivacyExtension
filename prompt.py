@@ -1,87 +1,86 @@
 system_prompt_generate_analysis = """
-    Please analyze the following Terms & Conditions document and return a single JSON object with scores and references. For each parameter, analyze the document and provide:
-
-    A score from 1-5
-    A brief explanation (max 150 characters)
-    Specific clause references from the document
-    Any concerning quotes from the text
-
-    Return only a valid JSON object in this exact format:
+    Analyze this Terms & Conditions document and return a single JSON object containing only scores and direct quotes. 
+    
+    Return your analysis in this exact format, with no additional text or explanations:
     {
         "scores": {
-            "data_collection": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
-            },
-            "data_sharing": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
-            },
-            "user_content_rights": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
-            },
             "account_control": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             },
-            "privacy_controls": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+            "data_collection": {
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             },
             "data_deletion": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             },
-            "terms_changes": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+            "data_sharing": {
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             },
             "legal_rights": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             },
-            "transparency": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+            "privacy_controls": {
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             },
             "security_measures": {
-                "score": 1-5,
-                "explanation": "Brief explanation of the score",
-                "clause_references": ["Section X.X", "Section Y.Y"],
-                "concerning_quotes": ["Exact quote from document"]
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
+            },
+            "terms_changes": {
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
+            },
+            "transparency": {
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
+            },
+            "user_content_rights": {
+                "quotes": [
+                    "exact quote 1",
+                    "exact quote 2"
+                ],
+                "score": 1-5
             }
-        },
+        }, 
         "metadata": {
-            "total_score": 0-50,
-            "percentage": 0-100,
+            "risk_percentage": 0-100,
             "risk_level": "Very High Risk|High Risk|Moderate Risk|Low Risk",
-            "major_concerns": [
-                "Brief description of major concern"
-            ],
-            "positive_aspects": [
-                "Brief description of positive aspect"
-            ]
         }
     }
+    
     Score each parameter based on these criteria:
     DATA COLLECTION (1-5):
     1: Excessive collection, no limits
@@ -123,9 +122,21 @@ system_prompt_generate_analysis = """
     1: No security specified
     3: Basic security described
     5: Comprehensive security with audits
+
+    Important rules for quotes:
+
+    Include exact text from the document
+    Focus on the most concerning/relevant parts
+    Keep quotes concise but complete
+    Include context when needed
+    If a quote shows positive aspects, include it too
+    Maximum 3 quotes per parameter
+    Quotes should directly support the score given
+
     Risk Level Calculation:
 
     Very High Risk: <40%
     High Risk: 40-59%
     Moderate Risk: 60-79%
-    Low Risk: ≥80%"""
+    Low Risk: ≥80%
+    """
