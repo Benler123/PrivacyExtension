@@ -1,5 +1,6 @@
 import anthropic
 import os
+import json
 
 def call_anthropic(system_prompt, messages):
     client = anthropic.Anthropic(
@@ -14,43 +15,162 @@ def call_anthropic(system_prompt, messages):
     content = response.content
     return content
 
-def prepare_prompt(tc, questions): 
-    numbered_questions = "\n".join(f"{i+1}. {q}" for i, q in enumerate(questions))
+def prepare_prompt(tc): 
+    # numbered_questions = "\n".join(f"{i+1}. {q}" for i, q in enumerate(questions))
         
-    system_prompt = tc + """
-    You must analyze questions about the T&C and respond ONLY with a list of numbers:
-    - 1 if the answer is yes/allowed/permitted
-    - 0 if the answer is no/not allowed/not permitted
+    system_prompt = """
+    Please analyze the following Terms & Conditions document and return a single JSON object with scores and references. For each parameter, analyze the document and provide:
 
-    Return ONLY the list of numbers separated by commas, in the same order as the questions without any explanation or additional text."""
+    A score from 1-5
+    A brief explanation (max 150 characters)
+    Specific clause references from the document
+    Any concerning quotes from the text
+
+    Return only a valid JSON object in this exact format:
+    {
+        "scores": {
+            "data_collection": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "data_sharing": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "user_content_rights": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "account_control": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "privacy_controls": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "data_deletion": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "terms_changes": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "legal_rights": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "transparency": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            },
+            "security_measures": {
+                "score": 1-5,
+                "explanation": "Brief explanation of the score",
+                "clause_references": ["Section X.X", "Section Y.Y"],
+                "concerning_quotes": ["Exact quote from document"]
+            }
+        },
+        "metadata": {
+            "total_score": 0-50,
+            "percentage": 0-100,
+            "risk_level": "Very High Risk|High Risk|Moderate Risk|Low Risk",
+            "major_concerns": [
+                "Brief description of major concern"
+            ],
+            "positive_aspects": [
+                "Brief description of positive aspect"
+            ]
+        }
+    }
+    Score each parameter based on these criteria:
+    DATA COLLECTION (1-5):
+    1: Excessive collection, no limits
+    3: Moderate collection, some limits
+    5: Minimal necessary collection
+    DATA SHARING (1-5):
+    1: Unrestricted sharing
+    3: Limited sharing with named partners
+    5: No sharing or explicit consent only
+    USER CONTENT RIGHTS (1-5):
+    1: Company claims full ownership
+    3: Balanced rights with restrictions
+    5: Users retain full rights
+    ACCOUNT CONTROL (1-5):
+    1: No control, arbitrary termination
+    3: Basic control with restrictions
+    5: Full control with clear processes
+    PRIVACY CONTROLS (1-5):
+    1: No privacy settings
+    3: Basic controls available
+    5: Comprehensive, accessible controls
+    DATA DELETION (1-5):
+    1: No deletion options
+    3: Standard deletion with retention
+    5: Complete deletion on demand
+    TERMS CHANGES (1-5):
+    1: No notice of changes
+    3: Basic notification
+    5: Advance notice with consent
+    LEGAL RIGHTS (1-5):
+    1: Extreme rights limitation
+    3: Some rights limitations
+    5: Full rights maintained
+    TRANSPARENCY (1-5):
+    1: Vague, confusing terms
+    3: Moderately clear terms
+    5: Crystal clear, plain language
+    SECURITY MEASURES (1-5):
+    1: No security specified
+    3: Basic security described
+    5: Comprehensive security with audits
+    Risk Level Calculation:
+
+    Very High Risk: <40%
+    High Risk: 40-59%
+    Moderate Risk: 60-79%
+    Low Risk: ≥80%"""
 
     messages = [
         {
             "role": "user",
-            "content": f"Based on the T&C, answer with return only comma-separated list of 0, 1 for these questions:\n{numbered_questions}"
+            "content": f"Return a JSON analysis for this T&C: {tc}"
         }
     ]
 
     return system_prompt, messages
 
-def parse_response(response): 
-    str_array = response[0].text
-    int_array = [int(x.strip()) for x in str_array.split(',')]
-    return int_array
+def parse_response(response):
+    response = response[0].text
+    analysis = json.loads(response)
+
+    return analysis
 
 def generate_analysis(tc): 
-    questions = [
-        "Do they collect data they don't need for the service?",
-        "Are they collecting data from your other devices or accounts?",
-        "Do they track your activity across other websites?",
-        "Can they access your contacts or address book?"
-    ]
-
-    system_prompt, messages = prepare_prompt(tc, questions)
+    system_prompt, messages = prepare_prompt(tc)
     response = call_anthropic(system_prompt, messages)
-    bool_answers = parse_response(response)
+    analysis = parse_response(response)
 
-    return bool_answers
+    return analysis
 
 
 
