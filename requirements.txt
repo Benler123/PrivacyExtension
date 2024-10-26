@@ -4,3 +4,4 @@ pymongo
 fastapi
 uvicorn
 anthropic
+pyperclip
