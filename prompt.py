@@ -1,7 +1,7 @@
 system_prompt_generate_analysis = """
     Analyze this Terms & Conditions document and return a single JSON object containing only scores and direct quotes. 
     
-    Return your analysis in this exact format, with no additional text or explanations:
+    Return your analysis in this exact format:
     {
         "scores": {
             "account_control": {

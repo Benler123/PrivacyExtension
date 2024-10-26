@@ -2,14 +2,16 @@ import anthropic
 import os
 import json
 from prompt import system_prompt_generate_analysis
+import pyperclip
 
+client = anthropic.Anthropic(
+    # defaults to os.environ.get("ANTHROPIC_API_KEY")
+)
+    
 def call_anthropic(system_prompt, messages):
-    client = anthropic.Anthropic(
-        # defaults to os.environ.get("ANTHROPIC_API_KEY")
-    )
     response = client.messages.create(
         model="claude-3-5-sonnet-20241022",
-        max_tokens=1024,
+        max_tokens=8192,
         messages=messages, 
         system=system_prompt
     )
@@ -24,7 +26,7 @@ def prepare_prompt(tc):
     messages = [
         {
             "role": "user",
-            "content": f"Return a JSON analysis for this T&C: {tc}"
+            "content": f"Return a JSON analysis for this T&C. Please make sure it is serializable: {tc}"
         }
     ]
 
@@ -32,10 +34,11 @@ def prepare_prompt(tc):
 
 def parse_response(response):
     response = response[0].text
-    print(response)
+    pyperclip.copy(response)
     analysis = json.loads(response)
-
     return analysis
+
+
 
 def generate_analysis(tc): 
     system_prompt, messages = prepare_prompt(tc)
@@ -46,5 +49,6 @@ def generate_analysis(tc):
 
 
 
-
-
+if __name__ == "__main__":
+    url = "https://press.hulu.com/privacy-policy/"
+    analysis = generate_analysis(url)
