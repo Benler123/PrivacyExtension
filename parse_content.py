@@ -1,117 +1,102 @@
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 import re
+from collections import Counter
+from string import punctuation
 import pyperclip
 
+class HTMLTextExtractor:
+    def __init__(self):
+        self.unwanted_tags = [
+            'script', 'style', 'meta', 'link', 'noscript', 
+            'header', 'footer', 'nav', '[document]'
+        ]
+    
+    def fetch_html(self, url):
+        """Fetch HTML content from URL"""
+        try:
+            headers = {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                # noqa
+                "Accept-Encoding": "gzip, deflate",
+                "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+                "Dnt": "1",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36",
+                # noqa
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            return response.text
+        except requests.RequestException as e:
+            print(f"Error fetching URL: {e}")
+            return None
 
-class URLContentParser:
-    def parse_html_content(url=None, html_content=None):
-        """
-        Parse HTML content either from a URL or direct HTML string.
-        Returns a dictionary containing different types of content found.
-        
-        Args:
-            url (str, optional): URL of the webpage to parse
-            html_content (str, optional): Raw HTML content to parse
-        
-        Returns:
-            dict: Dictionary containing parsed content
-        """
-        if not url and not html_content:
-            raise ValueError("Either URL or HTML content must be provided")
-        
-        # Get HTML content
-        if url:
-            try:
-                response = requests.get(url)
-                response.raise_for_status()
-                html_content = response.text
-            except requests.RequestException as e:
-                raise Exception(f"Error fetching URL: {e}")
-        
-        # Parse HTML with BeautifulSoup
+    def clean_text(self, text):
+        """Clean extracted text"""
+        # Remove extra whitespace
+        text = ' '.join(text.split())
+        # Remove punctuation
+        text = text.translate(str.maketrans('', '', punctuation))
+        # Convert to lowercase
+        return text.lower()
+    
+    def extract_words(self, html_content, min_word_length=2):
+        """Extract words from HTML content"""
+        # Parse HTML
         soup = BeautifulSoup(html_content, 'html.parser')
         
-        # Remove script and style elements
-        for script in soup(["script", "style"]):
-            script.decompose()
+        # Remove unwanted tags
+        for tag in self.unwanted_tags:
+            for element in soup.find_all(tag):
+                element.decompose()
         
-        # Initialize dictionary for parsed content
-        parsed_content = {
-            'title': None,
-            'meta_description': None,
-            'headings': [],
-            'paragraphs': [],
-            'links': [],
-            'images': [],
-            'lists': [],
-            'tables': []
+        # Get text content
+        text = soup.get_text(separator=' ')
+        
+        # Clean text
+        text = self.clean_text(text)
+        
+        # Split into words and filter
+        words = [word for word in text.split() 
+                if len(word) >= min_word_length 
+                and not word.isnumeric()]
+        
+        return words
+    
+    def get_word_stats(self, words):
+        """Get statistics about the words"""
+        return {
+            'total_words': len(words),
+            'unique_words': len(set(words)),
+            'word_frequency': Counter(words).most_common(10)
         }
+    
+    def process_url(self, url, min_word_length=2, get_stats=True):
+        """Process URL and return words and optionally stats"""
+        html_content = self.fetch_html(url)
+        if not html_content:
+            return None
         
-        # Get title
-        title_tag = soup.find('title')
-        if title_tag:
-            parsed_content['title'] = title_tag.string.strip()
+        words = self.extract_words(html_content, min_word_length)
         
-        # Get meta description
-        meta_desc = soup.find('meta', attrs={'name': 'description'})
-        if meta_desc:
-            parsed_content['meta_description'] = meta_desc.get('content', '').strip()
+        if get_stats:
+            stats = self.get_word_stats(words)
+            return words, stats
+        return words
+    
+    def process_html(self, html_content, min_word_length=2, get_stats=True):
+        """Process HTML content directly and return words and optionally stats"""
+        words = self.extract_words(html_content, min_word_length)
         
-        # Get all headings (h1-h6)
-        for i in range(1, 7):
-            headings = soup.find_all(f'h{i}')
-            for heading in headings:
-                parsed_content['headings'].append({
-                    'level': i,
-                    'text': heading.get_text().strip()
-                })
-        
-        # Get paragraphs
-        for p in soup.find_all('p'):
-            text = p.get_text().strip()
-            if text:  # Only add non-empty paragraphs
-                parsed_content['paragraphs'].append(text)
-        
-        # Get links
-        for link in soup.find_all('a'):
-            href = link.get('href')
-            if href:  # Only add links with href attribute
-                parsed_content['links'].append({
-                    'text': link.get_text().strip(),
-                    'href': href
-                })
-        
-        # Get images
-        for img in soup.find_all('img'):
-            image_data = {
-                'src': img.get('src'),
-                'alt': img.get('alt', ''),
-                'title': img.get('title', '')
-            }
-            parsed_content['images'].append(image_data)
-        
-        # Get lists (both ordered and unordered)
-        for list_tag in soup.find_all(['ul', 'ol']):
-            list_items = []
-            for item in list_tag.find_all('li'):
-                list_items.append(item.get_text().strip())
-            if list_items:  # Only add non-empty lists
-                parsed_content['lists'].append({
-                    'type': list_tag.name,
-                    'items': list_items
-                })
-        
-        # Get tables
-        for table in soup.find_all('table'):
-            table_data = []
-            rows = table.find_all('tr')
-            for row in rows:
-                cols = row.find_all(['td', 'th'])
-                row_data = [col.get_text().strip() for col in cols]
-                if row_data:  # Only add non-empty rows
-                    table_data.append(row_data)
-            if table_data:  # Only add non-empty tables
-                parsed_content['tables'].append(table_data)
-        
-        return parsed_content
+        if get_stats:
+            stats = self.get_word_stats(words)
+            return words, stats
+        return words
+
+if __name__ == "__main__":
+    extractor = HTMLTextExtractor()
+    words, stats = extractor.process_url("https://www.amazon.com/gp/help/customer/display.html?nodeId=202140280") 
+    words = ' '.join(words) 
+    pyperclip.copy(words)
+    
