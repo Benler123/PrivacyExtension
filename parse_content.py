@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 import re
 from collections import Counter
 from string import punctuation
-import pyperclip
 
 class HTMLTextExtractor:
     def __init__(self):
@@ -94,9 +93,4 @@ class HTMLTextExtractor:
             return words, stats
         return words
 
-if __name__ == "__main__":
-    extractor = HTMLTextExtractor()
-    words, stats = extractor.process_url("https://www.amazon.com/gp/help/customer/display.html?nodeId=202140280") 
-    words = ' '.join(words) 
-    pyperclip.copy(words)
     

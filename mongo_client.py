@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 import os
+import certifi
 
 MONGO_URI = "mongodb+srv://sunidhi:TRzCMl4WHp6CcTdT@privacy.kieyt.mongodb.net/?retryWrites=true&w=majority&appName=Privacy"
 

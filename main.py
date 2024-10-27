@@ -2,7 +2,6 @@ from parse_content import HTMLTextExtractor
 from analyze_content import generate_analysis
 from mongo_client import MongoConnector
 import urllib.parse
-import pyperclip 
 
 if __name__ == "__main__":
     url = "https://press.hulu.com/privacy-policy/"

@@ -1,5 +1,5 @@
 system_prompt_generate_analysis = """
-    Analyze this Terms & Conditions document and return a single JSON object containing only scores and direct quotes. 
+    Analyze this Terms & Conditions document and return a single JSON object containing only scores and direct full-sentance quotes. 
     
     Return your analysis in this exact format:
     {
@@ -125,6 +125,7 @@ system_prompt_generate_analysis = """
 
     Important rules for quotes:
 
+    Use full-sentences for quotes
     Include exact text from the document
     Focus on the most concerning/relevant parts
     Keep quotes concise but complete
