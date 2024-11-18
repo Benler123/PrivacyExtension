@@ -50,11 +50,11 @@ def parse_response(response):
 
 def generate_analysis(tc): 
     system_prompt, user_prompt = prepare_prompt(tc)
-    response = call_gemini(system_prompt, user_prompt)
+    response = call_anthropic(system_prompt, user_prompt)
     analysis = parse_response(response)
-    if analysis is None:
-        response = call_anthropic(system_prompt, user_prompt)
-        analysis = parse_response(response)
+    # if analysis is None:
+    #     response = call_anthropic(system_prompt, user_prompt)
+    #     analysis = parse_response(response)
 
     return analysis
 
